@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"strconv"
 	"time"
 
 	"google.golang.org/grpc"
@@ -29,6 +30,11 @@ func SendBeat() {
 	add := ips[0]
 	port := GetConfig("port")
 	appName := GetConfig("app_name")
+	timeout := GetConfig("timeout")
+	if timeout == "" {
+		timeout = "1000"
+	}
+	times, _ := strconv.Atoi(timeout)
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
 			ServiceName: appName + "@" + code,
@@ -43,7 +49,7 @@ func SendBeat() {
 		}
 		//fmt.Printf("%#v", res)
 		//log.Println("发送心跳信息.")
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(time.Duration(times) * time.Millisecond)
 	}
 }
 
