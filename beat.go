@@ -42,7 +42,7 @@ func SendBeat() {
 			break
 		}
 		//fmt.Printf("%#v", res)
-		log.Println("发送心跳信息.")
+		//log.Println("发送心跳信息.")
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
