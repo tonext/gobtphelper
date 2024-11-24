@@ -2,6 +2,7 @@ package gobtphelper
 
 import (
 	"os"
+	"strings"
 
 	"gopkg.in/ini.v1"
 )
@@ -16,14 +17,28 @@ func GetSectionConfig(section string, key string) string {
 	return config.Section(section).Key(key).String()
 }
 
-func getFilePath() (filePath string) {
-	args := os.Args
-	if len(args) > 1 {
-		filePath = "./conf/app-" + args[1] + ".ini"
+func getFilePath() string {
+	envValue := GetArgValue("-env=")
+	var filePath string
+	if envValue != "" {
+		filePath = "./conf/app-" + envValue + ".ini"
 	} else {
 		filePath = "./conf/app.ini"
 	}
-	return
+	return filePath
+}
+
+func GetArgValue(argName string) string {
+	args := os.Args
+	argValue := ""
+	for _, arg := range args {
+		if strings.HasPrefix(arg, argName) {
+			// 提取 -env= 后面的值
+			argValue = strings.TrimPrefix(arg, argName)
+			//fmt.Println("环境变量值:", envValue)
+		}
+	}
+	return argValue
 }
 
 // func GetRemoteConfig(section string, key string) string {
