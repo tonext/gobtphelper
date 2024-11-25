@@ -8,14 +8,14 @@ import (
 )
 
 type CustomClaims struct {
-	UserId int64 `json:"userId"`
+	AccountId int64 `json:"accountId"`
 	jwt.StandardClaims
 }
 
-func GetToken(userId int64) string {
+func GetToken(accountId int64) string {
 	// 创建一个自定义的声明
 	claims := CustomClaims{
-		UserId: userId,
+		AccountId: accountId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(), // 令牌有效期为 72 小时
 			Issuer:    "btp.ccszhd.com",
@@ -34,7 +34,7 @@ func GetToken(userId int64) string {
 	return tokenString
 }
 
-func GetUserIdByToken(tokenString string) (int64, error) {
+func GetAccoundIdByToken(tokenString string) (int64, error) {
 	secretKey := GetConfig("jwt_secret_key")
 	// 解析 JWT
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -54,7 +54,7 @@ func GetUserIdByToken(tokenString string) (int64, error) {
 		if claims.ExpiresAt < time.Now().Unix() {
 			return 0, fmt.Errorf("token has expired")
 		}
-		return claims.UserId, nil
+		return claims.AccountId, nil
 	}
 	return 0, fmt.Errorf("invalid token")
 }

@@ -1,0 +1,24 @@
+syntax = "proto3";
+option go_package="./LogicService";
+
+service LogicService{
+    rpc SendMessage(ProtoMessage) returns (ProtoMessageResult);
+}
+
+message ProtoMessage{
+    string msgId = 1;
+    int32 isBeat = 2;
+    string token = 3;
+    optional string serviceName = 4;
+    optional string actionName = 5;
+    optional bytes data =6;
+}
+
+message ProtoMessageResult{
+    string msgId = 1;
+    int32 isAck = 2;
+    int64 accountId = 3;
+    optional string serviceName = 4;
+    optional string actionName = 5;
+    optional bytes data = 6;
+}
