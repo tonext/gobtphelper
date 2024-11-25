@@ -4,7 +4,7 @@
 // 	protoc        v5.28.3
 // source: proto/LogicService/LogicService.proto
 
-package LogicService
+package gobtphelper
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

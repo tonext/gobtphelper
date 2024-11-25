@@ -34,7 +34,7 @@ func GetToken(accountId int64) string {
 	return tokenString
 }
 
-func GetAccoundIdByToken(tokenString string) (int64, error) {
+func GetAccountIdByToken(tokenString string) (int64, error) {
 	secretKey := GetConfig("jwt_secret_key")
 	// 解析 JWT
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
