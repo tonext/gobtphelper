@@ -4,7 +4,7 @@
 // - protoc             v5.28.3
 // source: proto/LogicService/LogicService.proto
 
-package LogicService
+package gobtphelper
 
 import (
 	context "context"
