@@ -2,11 +2,11 @@ syntax = "proto3";
 option go_package="./;gobtphelper";
 
 service LogicService{
-    rpc SendMessage(ProtoMessage) returns (ProtoMessageResult);
+    rpc SendToLogic(ProtoMessage) returns (ProtoMessageResult);
 }
 
 service GatewayService{
-    rpc ReceiveMessage(ProtoMessageResult) returns (ProtoInt);
+    rpc SendToGateway(ProtoMessageResult) returns (ProtoInt);
 }
 
 message ProtoInt{

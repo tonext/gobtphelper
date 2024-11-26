@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LogicService_SendMessage_FullMethodName = "/LogicService/SendMessage"
+	LogicService_SendToLogic_FullMethodName = "/LogicService/SendToLogic"
 )
 
 // LogicServiceClient is the client API for LogicService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LogicServiceClient interface {
-	SendMessage(ctx context.Context, in *ProtoMessage, opts ...grpc.CallOption) (*ProtoMessageResult, error)
+	SendToLogic(ctx context.Context, in *ProtoMessage, opts ...grpc.CallOption) (*ProtoMessageResult, error)
 }
 
 type logicServiceClient struct {
@@ -37,10 +37,10 @@ func NewLogicServiceClient(cc grpc.ClientConnInterface) LogicServiceClient {
 	return &logicServiceClient{cc}
 }
 
-func (c *logicServiceClient) SendMessage(ctx context.Context, in *ProtoMessage, opts ...grpc.CallOption) (*ProtoMessageResult, error) {
+func (c *logicServiceClient) SendToLogic(ctx context.Context, in *ProtoMessage, opts ...grpc.CallOption) (*ProtoMessageResult, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProtoMessageResult)
-	err := c.cc.Invoke(ctx, LogicService_SendMessage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, LogicService_SendToLogic_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *logicServiceClient) SendMessage(ctx context.Context, in *ProtoMessage, 
 // All implementations must embed UnimplementedLogicServiceServer
 // for forward compatibility.
 type LogicServiceServer interface {
-	SendMessage(context.Context, *ProtoMessage) (*ProtoMessageResult, error)
+	SendToLogic(context.Context, *ProtoMessage) (*ProtoMessageResult, error)
 	mustEmbedUnimplementedLogicServiceServer()
 }
 
@@ -62,8 +62,8 @@ type LogicServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLogicServiceServer struct{}
 
-func (UnimplementedLogicServiceServer) SendMessage(context.Context, *ProtoMessage) (*ProtoMessageResult, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+func (UnimplementedLogicServiceServer) SendToLogic(context.Context, *ProtoMessage) (*ProtoMessageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendToLogic not implemented")
 }
 func (UnimplementedLogicServiceServer) mustEmbedUnimplementedLogicServiceServer() {}
 func (UnimplementedLogicServiceServer) testEmbeddedByValue()                      {}
@@ -86,20 +86,20 @@ func RegisterLogicServiceServer(s grpc.ServiceRegistrar, srv LogicServiceServer)
 	s.RegisterService(&LogicService_ServiceDesc, srv)
 }
 
-func _LogicService_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _LogicService_SendToLogic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProtoMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LogicServiceServer).SendMessage(ctx, in)
+		return srv.(LogicServiceServer).SendToLogic(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: LogicService_SendMessage_FullMethodName,
+		FullMethod: LogicService_SendToLogic_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LogicServiceServer).SendMessage(ctx, req.(*ProtoMessage))
+		return srv.(LogicServiceServer).SendToLogic(ctx, req.(*ProtoMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +112,8 @@ var LogicService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*LogicServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendMessage",
-			Handler:    _LogicService_SendMessage_Handler,
+			MethodName: "SendToLogic",
+			Handler:    _LogicService_SendToLogic_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -121,14 +121,14 @@ var LogicService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	GatewayService_ReceiveMessage_FullMethodName = "/GatewayService/ReceiveMessage"
+	GatewayService_SendToGateway_FullMethodName = "/GatewayService/SendToGateway"
 )
 
 // GatewayServiceClient is the client API for GatewayService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GatewayServiceClient interface {
-	ReceiveMessage(ctx context.Context, in *ProtoMessageResult, opts ...grpc.CallOption) (*ProtoInt, error)
+	SendToGateway(ctx context.Context, in *ProtoMessageResult, opts ...grpc.CallOption) (*ProtoInt, error)
 }
 
 type gatewayServiceClient struct {
@@ -139,10 +139,10 @@ func NewGatewayServiceClient(cc grpc.ClientConnInterface) GatewayServiceClient {
 	return &gatewayServiceClient{cc}
 }
 
-func (c *gatewayServiceClient) ReceiveMessage(ctx context.Context, in *ProtoMessageResult, opts ...grpc.CallOption) (*ProtoInt, error) {
+func (c *gatewayServiceClient) SendToGateway(ctx context.Context, in *ProtoMessageResult, opts ...grpc.CallOption) (*ProtoInt, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProtoInt)
-	err := c.cc.Invoke(ctx, GatewayService_ReceiveMessage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, GatewayService_SendToGateway_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func (c *gatewayServiceClient) ReceiveMessage(ctx context.Context, in *ProtoMess
 // All implementations must embed UnimplementedGatewayServiceServer
 // for forward compatibility.
 type GatewayServiceServer interface {
-	ReceiveMessage(context.Context, *ProtoMessageResult) (*ProtoInt, error)
+	SendToGateway(context.Context, *ProtoMessageResult) (*ProtoInt, error)
 	mustEmbedUnimplementedGatewayServiceServer()
 }
 
@@ -164,8 +164,8 @@ type GatewayServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGatewayServiceServer struct{}
 
-func (UnimplementedGatewayServiceServer) ReceiveMessage(context.Context, *ProtoMessageResult) (*ProtoInt, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReceiveMessage not implemented")
+func (UnimplementedGatewayServiceServer) SendToGateway(context.Context, *ProtoMessageResult) (*ProtoInt, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendToGateway not implemented")
 }
 func (UnimplementedGatewayServiceServer) mustEmbedUnimplementedGatewayServiceServer() {}
 func (UnimplementedGatewayServiceServer) testEmbeddedByValue()                        {}
@@ -188,20 +188,20 @@ func RegisterGatewayServiceServer(s grpc.ServiceRegistrar, srv GatewayServiceSer
 	s.RegisterService(&GatewayService_ServiceDesc, srv)
 }
 
-func _GatewayService_ReceiveMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GatewayService_SendToGateway_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProtoMessageResult)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GatewayServiceServer).ReceiveMessage(ctx, in)
+		return srv.(GatewayServiceServer).SendToGateway(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: GatewayService_ReceiveMessage_FullMethodName,
+		FullMethod: GatewayService_SendToGateway_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GatewayServiceServer).ReceiveMessage(ctx, req.(*ProtoMessageResult))
+		return srv.(GatewayServiceServer).SendToGateway(ctx, req.(*ProtoMessageResult))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -214,8 +214,8 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GatewayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ReceiveMessage",
-			Handler:    _GatewayService_ReceiveMessage_Handler,
+			MethodName: "SendToGateway",
+			Handler:    _GatewayService_SendToGateway_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
