@@ -28,17 +28,35 @@ func SendBeat() {
 		log.Println("获取本地IP地址失败!", err)
 	}
 	add := ips[0]
+
 	port := GetConfig("port")
+	protEnv := GetArgValue("-port=")
+	if protEnv != "" {
+		port = protEnv
+	}
+
 	appName := GetConfig("app_name")
+
 	timeout := GetConfig("timeout")
 	if timeout == "" {
 		timeout = "1000"
 	}
 	times, _ := strconv.Atoi(timeout)
+
+	serviceName := appName + "@" + code
+	address := add + ":" + port
+	zoneCode := GetConfig("zone")
+	zoneCodeEnv := GetArgValue("-zone=")
+	if zoneCodeEnv != "" {
+		zoneCode = zoneCodeEnv
+	}
+	if zoneCode != "" {
+		serviceName = appName + "-" + zoneCode + "@" + code
+	}
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
-			ServiceName: appName + "@" + code,
-			Address:     add + ":" + port,
+			ServiceName: serviceName,
+			Address:     address,
 		})
 
 		GlobalServices = res.Services
