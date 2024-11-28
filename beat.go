@@ -13,6 +13,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var GlobalGrpcPort int
+
 func SendBeat() {
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
 	//grpc.WithTransportCredentials: 配置连接级别的安全凭证（例如 tls/ssl 返回一个dialoption
@@ -22,20 +24,11 @@ func SendBeat() {
 		return
 	}
 	client := NewCenterServiceClient(grpcClient)
-	code := generateRandomString(8)
 	ips, err := GetLocalIPs()
 	if err != nil {
 		log.Println("获取本地IP地址失败!", err)
 	}
 	add := ips[0]
-
-	port := GetConfig("port")
-	protEnv := GetArgValue("-port=")
-	if protEnv != "" {
-		port = protEnv
-	}
-
-	appName := GetConfig("app_name")
 
 	timeout := GetConfig("timeout")
 	if timeout == "" {
@@ -43,19 +36,13 @@ func SendBeat() {
 	}
 	times, _ := strconv.Atoi(timeout)
 
-	serviceName := appName + "@" + code
-	address := add + ":" + port
-	zoneCode := GetConfig("zone")
-	zoneCodeEnv := GetArgValue("-zone=")
-	if zoneCodeEnv != "" {
-		zoneCode = zoneCodeEnv
-	}
-	if zoneCode != "" {
-		serviceName = appName + "-" + zoneCode + "@" + code
-	}
+	serviceFullName := GetServiceFullName()
+
+	address := add + ":" + strconv.Itoa(GlobalGrpcPort)
+
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
-			ServiceName: serviceName,
+			ServiceName: serviceFullName,
 			Address:     address,
 		})
 
@@ -101,4 +88,45 @@ func GetLocalIPs() ([]string, error) {
 		return nil, fmt.Errorf("no non-loopback IPv4 addresses found")
 	}
 	return ips, nil
+}
+
+func GetServiceFullName() string {
+	appName := GetConfig("app_name")
+	code := generateRandomString(8)
+	serviceFullName := appName + "@" + code
+	zoneCode := GetConfig("zone")
+	zoneCodeEnv := GetArgValue("-zone=")
+	if zoneCodeEnv != "" {
+		zoneCode = zoneCodeEnv
+	}
+	if zoneCode != "" {
+		serviceFullName = appName + "-" + zoneCode + "@" + code
+	}
+	return serviceFullName
+}
+
+func LoadGrpcPort() {
+	port := GetConfig("port")
+	protEnv := GetArgValue("-port=")
+	if protEnv != "" {
+		port = protEnv
+	}
+	result, err := strconv.Atoi(port)
+	if err != nil {
+		log.Print("端口号获取失败！")
+	}
+	GlobalGrpcPort = result
+}
+
+func GetWsPort() int {
+	port := GetConfig("ws_port")
+	protEnv := GetArgValue("-ws_port=")
+	if protEnv != "" {
+		port = protEnv
+	}
+	result, err := strconv.Atoi(port)
+	if err != nil {
+		log.Print("WebSocket端口号获取失败！")
+	}
+	return result
 }
