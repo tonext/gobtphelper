@@ -142,9 +142,8 @@ func checkPort(port int) string {
 		// 	}
 		// }
 	}
-
 	// 如果监听成功，记得关闭监听器以释放资源
-	defer listener.Close()
+	listener.Close()
 	fmt.Println("获取到端口 " + portString)
 	return portString
 }
