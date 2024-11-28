@@ -133,12 +133,13 @@ func checkPort(port int) string {
 		// 如果出错，打印错误信息
 		fmt.Printf("无法监听 %s: %v\n", address, err)
 		// 检查错误类型，判断是否为端口被占用
-		if opErr, ok := err.(*net.OpError); ok {
-			if se, ok := opErr.Err.(*net.AddrError); ok && se.Err == "address already in use" {
-				fmt.Println("端口 " + portString + " 已被占用。")
-				return ""
-			}
-		}
+		return ""
+		// if opErr, ok := err.(*net.OpError); ok {
+		// 	if se, ok := opErr.Err.(*net.AddrError); ok && se.Err == "address already in use" {
+		// 		fmt.Println("端口 " + portString + " 已被占用。")
+		// 		return ""
+		// 	}
+		// }
 	}
 
 	// 如果监听成功，记得关闭监听器以释放资源
