@@ -13,8 +13,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var GlobalGrpcPort int
-
 func SendBeat() {
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
 	//grpc.WithTransportCredentials: 配置连接级别的安全凭证（例如 tls/ssl 返回一个dialoption
@@ -38,7 +36,7 @@ func SendBeat() {
 
 	serviceFullName := GetServiceFullName()
 
-	address := add + ":" + strconv.Itoa(GlobalGrpcPort)
+	address := add + ":" + GetGrpcPort()
 
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
@@ -105,28 +103,66 @@ func GetServiceFullName() string {
 	return serviceFullName
 }
 
-func LoadGrpcPort() {
-	port := GetConfig("port")
+func GetGrpcPort() string {
+	portString := GetConfig("port")
 	protEnv := GetArgValue("-port=")
 	if protEnv != "" {
-		port = protEnv
+		portString = protEnv
 	}
-	result, err := strconv.Atoi(port)
+	port, err := strconv.Atoi(portString)
 	if err != nil {
 		log.Print("端口号获取失败！")
 	}
-	GlobalGrpcPort = result
+	var result string
+	for {
+		result = checkPort(port)
+		if result != "" {
+			break
+		}
+	}
+	return result
 }
 
-func GetWsPort() int {
-	port := GetConfig("ws_port")
+func checkPort(port int) string {
+	portString := strconv.Itoa(port)
+	// 定义要检查的地址和端口
+	address := "127.0.0.1:" + portString
+	// 尝试创建一个TCP监听器
+	listener, err := net.Listen("tcp", address)
+	if err != nil {
+		// 如果出错，打印错误信息
+		fmt.Printf("无法监听 %s: %v\n", address, err)
+		// 检查错误类型，判断是否为端口被占用
+		if opErr, ok := err.(*net.OpError); ok {
+			if se, ok := opErr.Err.(*net.AddrError); ok && se.Err == "address already in use" {
+				fmt.Println("端口 " + portString + " 已被占用。")
+				return ""
+			}
+		}
+	}
+
+	// 如果监听成功，记得关闭监听器以释放资源
+	defer listener.Close()
+	fmt.Println("获取到端口 " + portString)
+	return portString
+}
+
+func GetWsPort() string {
+	portString := GetConfig("ws_port")
 	protEnv := GetArgValue("-ws_port=")
 	if protEnv != "" {
-		port = protEnv
+		portString = protEnv
 	}
-	result, err := strconv.Atoi(port)
+	port, err := strconv.Atoi(portString)
 	if err != nil {
 		log.Print("WebSocket端口号获取失败！")
+	}
+	var result string
+	for {
+		result = checkPort(port)
+		if result != "" {
+			break
+		}
 	}
 	return result
 }
