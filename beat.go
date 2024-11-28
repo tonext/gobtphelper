@@ -15,7 +15,7 @@ import (
 
 var GlobalGrpcPort string
 
-func SendBeat() {
+func SendBeat(port string) {
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
 	//grpc.WithTransportCredentials: 配置连接级别的安全凭证（例如 tls/ssl 返回一个dialoption
 	grpcClient, err := grpc.DialContext(context.Background(), GetConfig("center_address"), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -38,7 +38,7 @@ func SendBeat() {
 
 	serviceFullName := GetServiceFullName()
 
-	address := add + ":" + GlobalGrpcPort
+	address := add + ":" + port
 
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
