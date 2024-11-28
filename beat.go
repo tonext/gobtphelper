@@ -119,6 +119,7 @@ func GetGrpcPort() string {
 		if result != "" {
 			break
 		}
+		port++
 	}
 	return result
 }
@@ -164,6 +165,7 @@ func GetWsPort() string {
 		if result != "" {
 			break
 		}
+		port++
 	}
 	return result
 }
