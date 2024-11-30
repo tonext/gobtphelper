@@ -2,10 +2,8 @@ package gobtphelper
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"math/rand"
-	"net"
 	"strconv"
 	"strings"
 	"time"
@@ -73,21 +71,23 @@ func generateRandomString(n int) string {
 
 func GetLocalIPs() ([]string, error) {
 	var ips []string
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return nil, err
-	}
+	local_ip := GetConfig("local_ip")
+	ips = strings.Split(local_ip, ",")
+	// addrs, err := net.InterfaceAddrs()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	for _, addr := range addrs {
-		if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
-			if ipNet.IP.To4() != nil {
-				ips = append(ips, ipNet.IP.String())
-			}
-		}
-	}
-	if len(ips) == 0 {
-		return nil, fmt.Errorf("no non-loopback IPv4 addresses found")
-	}
+	// for _, addr := range addrs {
+	// 	if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+	// 		if ipNet.IP.To4() != nil {
+	// 			ips = append(ips, ipNet.IP.String())
+	// 		}
+	// 	}
+	// }
+	// if len(ips) == 0 {
+	// 	return nil, fmt.Errorf("no non-loopback IPv4 addresses found")
+	// }
 	return ips, nil
 }
 
