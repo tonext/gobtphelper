@@ -2,8 +2,10 @@ package gobtphelper
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
+	"net"
 	"strconv"
 	"strings"
 	"time"
@@ -23,11 +25,8 @@ func SendBeat(port string) {
 		return
 	}
 	client := NewCenterServiceClient(grpcClient)
-	ips, err := GetLocalIPs()
-	if err != nil {
-		log.Println("获取本地IP地址失败!", err)
-	}
-	add := ips[0]
+
+	ip := GetRegisterIp()
 
 	timeout := GetConfig("timeout")
 	if timeout == "" {
@@ -37,7 +36,7 @@ func SendBeat(port string) {
 
 	serviceFullName := GetRandomServiceFullName()
 
-	address := add + ":" + port
+	address := ip + ":" + port
 
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
@@ -71,24 +70,28 @@ func generateRandomString(n int) string {
 
 func GetLocalIPs() ([]string, error) {
 	var ips []string
-	local_ip := GetConfig("local_ip")
-	ips = strings.Split(local_ip, ",")
-	// addrs, err := net.InterfaceAddrs()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	//local_ip := GetConfig("local_ip")
+	//ips = strings.Split(local_ip, ",")
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return nil, err
+	}
 
-	// for _, addr := range addrs {
-	// 	if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
-	// 		if ipNet.IP.To4() != nil {
-	// 			ips = append(ips, ipNet.IP.String())
-	// 		}
-	// 	}
-	// }
-	// if len(ips) == 0 {
-	// 	return nil, fmt.Errorf("no non-loopback IPv4 addresses found")
-	// }
+	for _, addr := range addrs {
+		if ipNet, ok := addr.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+			if ipNet.IP.To4() != nil {
+				ips = append(ips, ipNet.IP.String())
+			}
+		}
+	}
+	if len(ips) == 0 {
+		return nil, fmt.Errorf("no non-loopback IPv4 addresses found")
+	}
 	return ips, nil
+}
+
+func GetRegisterIp() string {
+	return GetConfig("register_ip")
 }
 
 func GetRandomServiceFullName() string {
