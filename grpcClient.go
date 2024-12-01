@@ -97,17 +97,18 @@ func SendToGateway(fromServiceName string, accountId int64, actionName string, d
 		log.Printf("正在处理第%v条注册信息.", count)
 		if strings.HasPrefix(item.ServiceName, serviceFullName) {
 			log.Printf("找到对应的注册信息, item=%v", item)
-			client, exists := gatewayClientManager.GetClient(serviceFullName)
+			client, exists := gatewayClientManager.GetClient(item.ServiceName)
 			if exists {
 				log.Printf("找到client")
 				_, err := (*client).SendToGateway(context.Background(), message)
 				if err != nil {
-					log.Printf("serviceFullName=%v, error=%v\n", serviceFullName, err)
+					log.Printf("error serviceFullName=%v, error=%v\n", item.ServiceName, err)
 				}
 			} else {
-				log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
+				log.Printf("没有找到client, serviceFullName=%v", item.ServiceName)
 			}
 		}
+		count++
 	}
 	// client, exists := gatewayClientManager.GetClient(serviceFullName)
 	// if exists {
