@@ -91,15 +91,15 @@ func SendToGateway(fromServiceName string, accountId int64, actionName string, d
 		IsAck:       0,
 	}
 	serviceFullName := "frame-gateway-" + GloablZoneCode
-	log.Printf("serviceFullName=%v", serviceFullName)
+	//log.Printf("serviceFullName=%v", serviceFullName)
 	count := 1
 	for _, item := range GlobalServices {
-		log.Printf("正在处理第%v条注册信息.", count)
+		//log.Printf("正在处理第%v条注册信息.", count)
 		if strings.HasPrefix(item.ServiceName, serviceFullName) {
-			log.Printf("找到对应的注册信息, item=%v", item)
+			//log.Printf("找到对应的注册信息, item=%v", item)
 			client, exists := gatewayClientManager.GetClient(item.ServiceName)
 			if exists {
-				log.Printf("找到client")
+				log.Printf("找到client, 发送消息到网关, gateway = %v", item.ServiceName)
 				_, err := (*client).SendToGateway(context.Background(), message)
 				if err != nil {
 					log.Printf("error serviceFullName=%v, error=%v\n", item.ServiceName, err)
