@@ -18,7 +18,7 @@ func GetZoneCode() string {
 		zoneCode = zoneCodeEnv
 	}
 	if zoneCode == "" {
-		log.Fatal("没有配置 -zone= 变量")
+		log.Println("没有配置 -zone= 变量")
 	}
 	return zoneCode
 }

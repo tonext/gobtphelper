@@ -79,19 +79,18 @@ func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *Gate
 	return &client
 }
 
-func SendToGateway(nodeCode string, fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
-	zoneCode := GetZoneCode()
+func SendToGateway(fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
 	message := &ProtoMessageResult{
 		MsgId:       strconv.Itoa(int(time.Now().UnixMilli())),
 		AccountId:   accountId,
-		NodeCode:    &nodeCode,
-		ZoneCode:    &zoneCode,
+		NodeCode:    &GlobalNodeCode,
+		ZoneCode:    &GloablZoneCode,
 		ServiceName: &fromServiceName,
 		ActionName:  &actionName,
 		Data:        data,
 		IsAck:       0,
 	}
-	serviceFullName := "frame-gateway-" + zoneCode
+	serviceFullName := "frame-gateway-" + GloablZoneCode
 	for _, item := range GlobalServices {
 		if strings.HasPrefix(item.ServiceName, serviceFullName) {
 			client, exists := gatewayClientManager.GetClient(serviceFullName)

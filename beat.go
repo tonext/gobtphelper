@@ -15,8 +15,9 @@ import (
 )
 
 var GlobalGrpcPort string
-var GlobalNodeCode string
-var GlobalServiceFullName string
+var GlobalNodeCode string = generateRandomString(8)
+var GloablZoneCode string = GetZoneCode()
+var GlobalServiceFullName string = GetRandomServiceFullName()
 
 func SendBeat(port string) {
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
@@ -98,15 +99,9 @@ func GetRegisterIp() string {
 
 func GetRandomServiceFullName() string {
 	appName := GetConfig("app_name")
-	GlobalNodeCode := generateRandomString(8)
 	serviceFullName := appName + "@" + GlobalNodeCode
-	zoneCode := GetConfig("zone")
-	zoneCodeEnv := GetArgValue("-zone=")
-	if zoneCodeEnv != "" {
-		zoneCode = zoneCodeEnv
-	}
-	if zoneCode != "" {
-		serviceFullName = appName + "-" + zoneCode + "@" + GlobalNodeCode
+	if GloablZoneCode != "" {
+		serviceFullName = appName + "-" + GloablZoneCode + "@" + GlobalNodeCode
 	}
 	return serviceFullName
 }
