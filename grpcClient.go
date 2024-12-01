@@ -79,32 +79,44 @@ func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *Gate
 	return &client
 }
 
-func SendToGateway(nodeCode string, gwCode string, fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
+func SendToGateway(nodeCode string, fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
 	zoneCode := GetZoneCode()
 	message := &ProtoMessageResult{
 		MsgId:       strconv.Itoa(int(time.Now().UnixMilli())),
 		AccountId:   accountId,
 		NodeCode:    &nodeCode,
 		ZoneCode:    &zoneCode,
-		GwCode:      &gwCode,
 		ServiceName: &fromServiceName,
 		ActionName:  &actionName,
 		Data:        data,
 		IsAck:       0,
 	}
-	serviceFullName := "frame-gateway-" + zoneCode + "@" + gwCode
-	client, exists := gatewayClientManager.GetClient(serviceFullName)
-	if exists {
-		//log.Printf("找到client")
-		resultMsg, err := (*client).SendToGateway(context.Background(), message)
-		if err != nil {
-			log.Printf("serviceFullName=%v, error=%v\n", serviceFullName, err)
+	serviceFullName := "frame-gateway-" + zoneCode
+	for _, item := range GlobalServices {
+		if strings.HasPrefix(item.ServiceName, serviceFullName) {
+			client, exists := gatewayClientManager.GetClient(serviceFullName)
+			if exists {
+				//log.Printf("找到client")
+				_, err := (*client).SendToGateway(context.Background(), message)
+				if err != nil {
+					log.Printf("serviceFullName=%v, error=%v\n", serviceFullName, err)
+				}
+			}
+			//log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
 		}
-		return resultMsg
 	}
-	log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
+	// client, exists := gatewayClientManager.GetClient(serviceFullName)
+	// if exists {
+	// 	//log.Printf("找到client")
+	// 	resultMsg, err := (*client).SendToGateway(context.Background(), message)
+	// 	if err != nil {
+	// 		log.Printf("serviceFullName=%v, error=%v\n", serviceFullName, err)
+	// 	}
+	// 	return resultMsg
+	// }
+	// log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
 	return &ProtoInt{
-		IsOk: 0,
+		IsOk: 1,
 	}
 }
 

@@ -36,7 +36,7 @@ func (sm *SessionManager) AddSession(session *Session) {
 	sm.mutex.Lock()
 	sm.sessions[session.AccountId] = session
 	sm.mutex.Unlock()
-	sessionCount++
+	sessionCount = len(sm.sessions)
 	log.Printf("新的客户端连接: accountId = %v, 总连接数: %v\n", session.AccountId, sessionCount)
 }
 
@@ -45,7 +45,7 @@ func (sm *SessionManager) RemoveSession(accountId string) {
 	sm.mutex.Lock()
 	delete(sm.sessions, accountId)
 	sm.mutex.Unlock()
-	sessionCount--
+	sessionCount = len(sm.sessions)
 	log.Printf("新的客户端连接: accountId = %v, 总连接数: %v\n", accountId, sessionCount)
 }
 
@@ -60,7 +60,7 @@ func (sm *SessionManager) GetSession(accountId string) (*Session, bool) {
 // 向指定用户发送消息
 func (sm *SessionManager) SendMessage(messageResult *ProtoMessageResult) error {
 	data, _ := proto.Marshal(messageResult)
-	log.Printf("messageResult = %v", messageResult)
+	//log.Printf("messageResult = %v", messageResult)
 	session, exists := sm.GetSession(strconv.Itoa(int(messageResult.AccountId)))
 	if !exists {
 		return fmt.Errorf("session not found for user %v", messageResult.AccountId)
