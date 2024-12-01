@@ -108,9 +108,19 @@ func GetRandomServiceFullName() string {
 
 func GetServiceFullName(serviceName string, nodeCode string) string {
 	for _, v := range GlobalServices {
-		if strings.Index(v.ServiceName, serviceName) > 0 && strings.Index(v.ServiceName, nodeCode) > 0 {
-			//tmp := strings.Split(v.ServiceName, "@")
-			return v.ServiceName
+		// log.Println("v=" + v.ServiceName)
+		// log.Println("zoneCode =" + GloablZoneCode)
+		tmp := strings.Split(v.ServiceName, "-")
+		if len(tmp) == 2 {
+			if strings.Contains(v.ServiceName, serviceName) && strings.Contains(v.ServiceName, nodeCode) {
+				//tmp := strings.Split(v.ServiceName, "@")
+				return v.ServiceName
+			}
+		} else if len(tmp) == 3 {
+			if strings.Contains(v.ServiceName, serviceName) && strings.Contains(v.ServiceName, nodeCode) && strings.Contains(v.ServiceName, GloablZoneCode) {
+				//tmp := strings.Split(v.ServiceName, "@")
+				return v.ServiceName
+			}
 		}
 	}
 	return ""

@@ -125,9 +125,9 @@ func SendToGateway(fromServiceName string, accountId int64, actionName string, d
 	}
 }
 
-func SendToLogic(nodeCode string, serviceName string, req *ProtoMessage) *ProtoMessageResult {
-	serviceFullName := GetServiceFullName(serviceName, nodeCode)
-	client, exists := logicClientManager.GetClient(serviceName)
+func SendToLogic(req *ProtoMessage) *ProtoMessageResult {
+	serviceFullName := GetServiceFullName(*req.ServiceName, *req.NodeCode)
+	client, exists := logicClientManager.GetClient(serviceFullName)
 	//client := NewLogicServiceClient(grpcClient)
 	if exists {
 		resultMsg, err := (*client).SendToLogic(context.Background(), req)
@@ -137,5 +137,9 @@ func SendToLogic(nodeCode string, serviceName string, req *ProtoMessage) *ProtoM
 		return resultMsg
 	}
 	log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
-	return nil
+	return &ProtoMessageResult{
+		MsgId:     req.MsgId,
+		IsAck:     0,
+		AccountId: 0,
+	}
 }
