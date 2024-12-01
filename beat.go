@@ -106,7 +106,7 @@ func GetRandomServiceFullName() string {
 	return serviceFullName
 }
 
-func GetServiceFullName(serviceName string, nodeCode string) string {
+func GetServiceFullName(serviceName string, nodeCode string, zoneCode string) string {
 	for _, v := range GlobalServices {
 		// log.Println("v=" + v.ServiceName)
 		// log.Println("zoneCode =" + GloablZoneCode)
@@ -117,7 +117,7 @@ func GetServiceFullName(serviceName string, nodeCode string) string {
 				return v.ServiceName
 			}
 		} else if len(tmp) == 3 {
-			if strings.Contains(v.ServiceName, serviceName) && strings.Contains(v.ServiceName, nodeCode) && strings.Contains(v.ServiceName, GloablZoneCode) {
+			if strings.Contains(v.ServiceName, serviceName) && strings.Contains(v.ServiceName, nodeCode) && strings.Contains(v.ServiceName, zoneCode) {
 				//tmp := strings.Split(v.ServiceName, "@")
 				return v.ServiceName
 			}

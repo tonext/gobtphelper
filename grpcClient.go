@@ -126,7 +126,7 @@ func SendToGateway(fromServiceName string, accountId int64, actionName string, d
 }
 
 func SendToLogic(req *ProtoMessage) *ProtoMessageResult {
-	serviceFullName := GetServiceFullName(*req.ServiceName, *req.NodeCode)
+	serviceFullName := GetServiceFullName(*req.ServiceName, *req.NodeCode, *req.ZoneCode)
 	client, exists := logicClientManager.GetClient(serviceFullName)
 	//client := NewLogicServiceClient(grpcClient)
 	if exists {
