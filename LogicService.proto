@@ -17,16 +17,20 @@ message ProtoMessage{
     string msgId = 1;
     int32 isBeat = 2;
     string token = 3;
-    optional string serviceName = 4;
-    optional string actionName = 5;
-    optional bytes data =6;
+    optional string nodeCode = 4;
+    optional int32 zoneId = 5;
+    optional string serviceName = 6;
+    optional string actionName = 7;
+    optional bytes data =8;
 }
 
 message ProtoMessageResult{
     string msgId = 1;
     int32 isAck = 2;
     int64 accountId = 3;
-    optional string serviceName = 4;
-    optional string actionName = 5;
-    optional bytes data = 6;
+    optional string nodeCode = 4;
+    optional int32 zoneId = 5;
+    optional string serviceName = 6;
+    optional string actionName = 7;
+    optional bytes data = 8;
 }
