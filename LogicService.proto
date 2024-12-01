@@ -18,10 +18,11 @@ message ProtoMessage{
     int32 isBeat = 2;
     string token = 3;
     optional string nodeCode = 4;
-    optional int32 zoneId = 5;
-    optional string serviceName = 6;
-    optional string actionName = 7;
-    optional bytes data =8;
+    optional string zoneCode = 5;
+    optional string gwCode = 6;
+    optional string serviceName = 7;
+    optional string actionName = 8;
+    optional bytes data =9;
 }
 
 message ProtoMessageResult{
@@ -29,8 +30,9 @@ message ProtoMessageResult{
     int32 isAck = 2;
     int64 accountId = 3;
     optional string nodeCode = 4;
-    optional int32 zoneId = 5;
-    optional string serviceName = 6;
-    optional string actionName = 7;
-    optional bytes data = 8;
+    optional string zoneCode = 5;
+    optional string gwCode = 6;
+    optional string serviceName = 7;
+    optional string actionName = 8;
+    optional bytes data = 9;
 }

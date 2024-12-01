@@ -32,24 +32,20 @@ func StartGrpcClients() {
 	for {
 		//log.Printf("%#v", gobtphelper.GlobalServices)
 		for _, item := range GlobalServices {
-			// log.Printf("GlobalServices item = %v", item)
-			tmp := strings.Split(item.ServiceName, "@")
-			// serviceName := strings.TrimPrefix(tmp[0], "logic-")
-			serviceFullName := tmp[0]
 			if strings.HasPrefix(item.ServiceName, "frame-gateway") {
-				_, exists := gatewayClientManager.GetClient(serviceFullName)
+				_, exists := gatewayClientManager.GetClient(item.ServiceName)
 				if !exists {
 					gatewayClientManager.AddClient(GatewayClient{
-						Conn:            startGatewayGrpcClient(serviceFullName, item.Address),
-						ServiceFullName: serviceFullName,
+						Conn:            startGatewayGrpcClient(item.ServiceName, item.Address),
+						ServiceFullName: item.ServiceName,
 					})
 				}
 			} else {
-				_, exists := logicClientManager.GetClient(serviceFullName)
+				_, exists := logicClientManager.GetClient(item.ServiceName)
 				if !exists {
 					logicClientManager.AddClient(LogicClient{
-						Conn:            startLogicGrpcClient(serviceFullName, item.Address),
-						ServiceFullName: serviceFullName,
+						Conn:            startLogicGrpcClient(item.ServiceName, item.Address),
+						ServiceFullName: item.ServiceName,
 					})
 				}
 			}
@@ -83,16 +79,20 @@ func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *Gate
 	return &client
 }
 
-func SendToGateway(fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
+func SendToGateway(nodeCode string, gwCode string, fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
+	zoneCode := GetZoneCode()
 	message := &ProtoMessageResult{
 		MsgId:       strconv.Itoa(int(time.Now().UnixMilli())),
 		AccountId:   accountId,
+		NodeCode:    &nodeCode,
+		ZoneCode:    &zoneCode,
+		GwCode:      &gwCode,
 		ServiceName: &fromServiceName,
 		ActionName:  &actionName,
 		Data:        data,
 		IsAck:       0,
 	}
-	serviceFullName := "frame-gateway-" + GetZoneCode()
+	serviceFullName := "frame-gateway-" + zoneCode + "@" + gwCode
 	client, exists := gatewayClientManager.GetClient(serviceFullName)
 	if exists {
 		//log.Printf("找到client")
@@ -108,9 +108,9 @@ func SendToGateway(fromServiceName string, accountId int64, actionName string, d
 	}
 }
 
-func SendToLogic(serviceName string, req *ProtoMessage) *ProtoMessageResult {
-	serviceFullName := GetServiceFullName(serviceName)
-	client, exists := logicClientManager.GetClient(serviceFullName)
+func SendToLogic(nodeCode string, serviceName string, req *ProtoMessage) *ProtoMessageResult {
+	serviceFullName := GetServiceFullName(serviceName, nodeCode)
+	client, exists := logicClientManager.GetClient(serviceName)
 	//client := NewLogicServiceClient(grpcClient)
 	if exists {
 		resultMsg, err := (*client).SendToLogic(context.Background(), req)

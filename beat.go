@@ -15,6 +15,8 @@ import (
 )
 
 var GlobalGrpcPort string
+var GlobalNodeCode string
+var GlobalServiceFullName string
 
 func SendBeat(port string) {
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
@@ -34,13 +36,13 @@ func SendBeat(port string) {
 	}
 	times, _ := strconv.Atoi(timeout)
 
-	serviceFullName := GetRandomServiceFullName()
+	GlobalServiceFullName := GetRandomServiceFullName()
 
 	address := ip + ":" + port
 
 	for {
 		res, err := client.SendBeat(context.Background(), &BeatReq{
-			ServiceName: serviceFullName,
+			ServiceName: GlobalServiceFullName,
 			Address:     address,
 		})
 
@@ -96,24 +98,24 @@ func GetRegisterIp() string {
 
 func GetRandomServiceFullName() string {
 	appName := GetConfig("app_name")
-	code := generateRandomString(8)
-	serviceFullName := appName + "@" + code
+	GlobalNodeCode := generateRandomString(8)
+	serviceFullName := appName + "@" + GlobalNodeCode
 	zoneCode := GetConfig("zone")
 	zoneCodeEnv := GetArgValue("-zone=")
 	if zoneCodeEnv != "" {
 		zoneCode = zoneCodeEnv
 	}
 	if zoneCode != "" {
-		serviceFullName = appName + "-" + zoneCode + "@" + code
+		serviceFullName = appName + "-" + zoneCode + "@" + GlobalNodeCode
 	}
 	return serviceFullName
 }
 
-func GetServiceFullName(serviceName string) string {
+func GetServiceFullName(serviceName string, nodeCode string) string {
 	for _, v := range GlobalServices {
-		if strings.Index(v.ServiceName, serviceName) > 0 {
-			tmp := strings.Split(v.ServiceName, "@")
-			return tmp[0]
+		if strings.Index(v.ServiceName, serviceName) > 0 && strings.Index(v.ServiceName, nodeCode) > 0 {
+			//tmp := strings.Split(v.ServiceName, "@")
+			return v.ServiceName
 		}
 	}
 	return ""
