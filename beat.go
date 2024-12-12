@@ -47,7 +47,7 @@ func SendBeat(port string) {
 			Address:     address,
 		})
 		if err != nil {
-			log.Fatalln("网络连接错误!")
+			log.Println("连接注册中心失败!")
 			break
 		}
 		GlobalServices = res.Services
