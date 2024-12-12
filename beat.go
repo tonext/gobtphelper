@@ -47,8 +47,9 @@ func SendBeat(port string) {
 			Address:     address,
 		})
 		if err != nil {
-			log.Println("连接注册中心失败!")
-			break
+			log.Println("连接注册中心失败! 2秒后重试")
+			time.Sleep(time.Duration(2000) * time.Millisecond)
+			continue
 		}
 		GlobalServices = res.Services
 		//fmt.Printf("%#v", res)
