@@ -99,7 +99,7 @@ func SendToGateway(fromServiceName string, accountId int64, actionName string, d
 			//log.Printf("找到对应的注册信息, item=%v", item)
 			client, exists := gatewayClientManager.GetClient(item.ServiceName)
 			if exists {
-				log.Printf("找到client, 发送消息到网关, gateway = %v", item.ServiceName)
+				//log.Printf("找到client, 发送消息到网关, gateway = %v", item.ServiceName)
 				_, err := (*client).SendToGateway(context.Background(), message)
 				if err != nil {
 					log.Printf("error serviceFullName=%v, error=%v\n", item.ServiceName, err)
