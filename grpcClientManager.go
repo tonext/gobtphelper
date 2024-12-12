@@ -7,9 +7,6 @@ import (
 	"sync"
 )
 
-var gatewayClientCount = 0
-var logicClientCount = 0
-
 // 定义一个会话结构体
 type LogicClient struct {
 	Conn            *LogicServiceClient
@@ -49,16 +46,16 @@ func (sm *LogicClientManager) AddClient(client LogicClient) {
 	sm.mutex.Lock()
 	sm.clients[client.ServiceFullName] = client.Conn
 	sm.mutex.Unlock()
-	logicClientCount++
-	log.Printf("add serviceName = %v, logicClient总连接数: %v\n", client.ServiceFullName, logicClientCount)
+	//logicClientCount++
+	log.Printf("新增logicClient服务: %v, 连接数: %v\n", client.ServiceFullName, len(sm.clients))
 }
 
 func (sm *GatewayClientManager) AddClient(client GatewayClient) {
 	sm.mutex.Lock()
 	sm.clients[client.ServiceFullName] = client.Conn
 	sm.mutex.Unlock()
-	gatewayClientCount++
-	log.Printf("add serviceName = %v, gatewayClient总连接数: %v\n", client.ServiceFullName, gatewayClientCount)
+	//gatewayClientCount++
+	log.Printf("新增gatewayClient服务 %v, 连接数: %v\n", client.ServiceFullName, len(sm.clients))
 }
 
 // 删除会话
@@ -66,16 +63,16 @@ func (sm *LogicClientManager) RemoveClient(serviceFullName string) {
 	sm.mutex.Lock()
 	delete(sm.clients, serviceFullName)
 	sm.mutex.Unlock()
-	logicClientCount--
-	log.Printf("delete serviceName = %v, logicClient总连接数: %v\n", serviceFullName, logicClientCount)
+	//logicClientCount--
+	log.Printf("删除logicClient服务 %v, 连接数: %v\n", serviceFullName, len(sm.clients))
 }
 
 func (sm *GatewayClientManager) RemoveClient(serviceFullName string) {
 	sm.mutex.Lock()
 	delete(sm.clients, serviceFullName)
 	sm.mutex.Unlock()
-	gatewayClientCount--
-	log.Printf("delete serviceName = %v, gatewayClient总连接数: %v\n", serviceFullName, gatewayClientCount)
+	//gatewayClientCount--
+	log.Printf("删除gatewayClient服务 %v, 连接数: %v\n", serviceFullName, len(sm.clients))
 }
 
 // 获取会话

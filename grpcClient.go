@@ -55,7 +55,7 @@ func StartGrpcClients() {
 }
 
 func startLogicGrpcClient(serviceFullName string, serviceAddress string) *LogicServiceClient {
-	log.Println("startGrpcClient serviceFullName = ", serviceFullName)
+	//log.Println("startGrpcClient serviceFullName = ", serviceFullName)
 	//defer removeGrpcClient(serviceFullName)
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
 	//grpc.WithTransportCredentials: 配置连接级别的安全凭证（例如 tls/ssl 返回一个dialoption
@@ -69,7 +69,7 @@ func startLogicGrpcClient(serviceFullName string, serviceAddress string) *LogicS
 }
 
 func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *GatewayServiceClient {
-	log.Println("startGrpcClient serviceFullName = ", serviceFullName)
+	//log.Println("startGrpcClient serviceFullName = ", serviceFullName)
 	grpcClient, err := grpc.DialContext(context.Background(), serviceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Printf("连接 %v 失败！%v\n", serviceFullName, err)
