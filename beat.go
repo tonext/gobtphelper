@@ -46,13 +46,11 @@ func SendBeat(port string) {
 			ServiceName: GlobalServiceFullName,
 			Address:     address,
 		})
-
-		GlobalServices = res.Services
-
 		if err != nil {
 			log.Fatalln("网络连接错误!")
 			break
 		}
+		GlobalServices = res.Services
 		//fmt.Printf("%#v", res)
 		//log.Println("发送心跳信息.")
 		time.Sleep(time.Duration(times) * time.Millisecond)

@@ -50,7 +50,7 @@ func StartGrpcClients() {
 				}
 			}
 		}
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second)
 	}
 }
 
