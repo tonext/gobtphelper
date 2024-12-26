@@ -116,18 +116,18 @@ func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *Gate
 	return &client
 }
 
-func SendToGateway(fromServiceName string, accountId int64, actionName string, data []byte) *ProtoInt {
+func SendToGateway(fromServiceName string, zoneCode string, accountId int64, actionName string, data []byte) *ProtoInt {
 	message := &ProtoMessageResult{
 		MsgId:       strconv.Itoa(int(time.Now().UnixMilli())),
 		AccountId:   accountId,
 		NodeCode:    &GlobalNodeCode,
-		ZoneCode:    &GloablZoneCode,
+		ZoneCode:    &zoneCode,
 		ServiceName: &fromServiceName,
 		ActionName:  &actionName,
 		Data:        data,
 		IsAck:       0,
 	}
-	serviceFullName := "frame-gateway-" + GloablZoneCode
+	serviceFullName := "frame-gateway-" + zoneCode
 	//log.Printf("serviceFullName=%v", serviceFullName)
 	count := 1
 	for _, item := range GlobalServices {
