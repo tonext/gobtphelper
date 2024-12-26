@@ -30,7 +30,11 @@ var gatewayClientManager = NewGatewayClientManager()
 
 func StartGrpcClients() {
 	for {
+
 		//log.Printf("%#v", gobtphelper.GlobalServices)
+		//清理不存在的服务
+		getCleanList()
+
 		for _, item := range GlobalServices {
 			if strings.HasPrefix(item.ServiceName, "frame-gateway") {
 				_, exists := gatewayClientManager.GetClient(item.ServiceName)
@@ -52,6 +56,39 @@ func StartGrpcClients() {
 		}
 		time.Sleep(time.Second)
 	}
+}
+
+func getCleanList() ([]string, []string) {
+	var logicList []string
+	var gatewayList []string
+	for key := range logicClientManager.clients {
+		if !isExistInCenter(key) {
+			logicList = append(logicList, key)
+		}
+	}
+	for key := range gatewayClientManager.clients {
+		if !isExistInCenter(key) {
+			gatewayList = append(gatewayList, key)
+		}
+	}
+	log.Printf("logicList = %#v \n", logicList)
+	log.Printf("gatewayList = %#v \n", gatewayList)
+	for _, item := range logicList {
+		logicClientManager.RemoveClient(item)
+	}
+	for _, item := range gatewayList {
+		gatewayClientManager.RemoveClient(item)
+	}
+	return logicList, gatewayList
+}
+
+func isExistInCenter(serviceName string) bool {
+	for _, item := range GlobalServices {
+		if item.ServiceName == serviceName {
+			return true
+		}
+	}
+	return false
 }
 
 func startLogicGrpcClient(serviceFullName string, serviceAddress string) *LogicServiceClient {
