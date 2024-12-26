@@ -71,8 +71,8 @@ func getCleanList() ([]string, []string) {
 			gatewayList = append(gatewayList, key)
 		}
 	}
-	log.Printf("logicList = %#v \n", logicList)
-	log.Printf("gatewayList = %#v \n", gatewayList)
+	// log.Printf("logicList = %#v \n", logicList)
+	// log.Printf("gatewayList = %#v \n", gatewayList)
 	for _, item := range logicList {
 		logicClientManager.RemoveClient(item)
 	}
