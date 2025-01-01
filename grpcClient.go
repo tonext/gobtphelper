@@ -170,6 +170,11 @@ func SendToLogic(req *ProtoMessage) *ProtoMessageResult {
 		resultMsg, err := (*client).SendToLogic(context.Background(), req)
 		if err != nil {
 			log.Printf("请求失败！serviceName=%v, error=%v\n", serviceFullName, err)
+			return &ProtoMessageResult{
+				MsgId:     req.MsgId,
+				IsAck:     0,
+				AccountId: 0,
+			}
 		}
 		return resultMsg
 	}
