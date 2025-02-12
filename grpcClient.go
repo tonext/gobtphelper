@@ -96,9 +96,12 @@ func startLogicGrpcClient(serviceFullName string, serviceAddress string) *LogicS
 	//defer removeGrpcClient(serviceFullName)
 	//credentials.NewClientTLSFromFile: 从输入的证眉眼文件中为客户端构造TLS凭证
 	//grpc.WithTransportCredentials: 配置连接级别的安全凭证（例如 tls/ssl 返回一个dialoption
+	debug := GetSectionConfig("helper", "debug")
 	grpcClient, err := grpc.DialContext(context.Background(), serviceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Printf("连接 %v 失败！%v\n", serviceFullName, err)
+		if debug == "true" {
+			log.Printf("连接 %v 失败！%v\n", serviceFullName, err)
+		}
 		return nil
 	}
 	client := NewLogicServiceClient(grpcClient)
@@ -107,9 +110,12 @@ func startLogicGrpcClient(serviceFullName string, serviceAddress string) *LogicS
 
 func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *GatewayServiceClient {
 	//log.Println("startGrpcClient serviceFullName = ", serviceFullName)
+	debug := GetSectionConfig("helper", "debug")
 	grpcClient, err := grpc.DialContext(context.Background(), serviceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Printf("连接 %v 失败！%v\n", serviceFullName, err)
+		if debug == "true" {
+			log.Printf("连接 %v 失败！%v\n", serviceFullName, err)
+		}
 		return nil
 	}
 	client := NewGatewayServiceClient(grpcClient)
@@ -117,6 +123,7 @@ func startGatewayGrpcClient(serviceFullName string, serviceAddress string) *Gate
 }
 
 func SendToGateway(fromServiceName string, zoneCode string, accountId int64, actionName string, data []byte) *ProtoInt {
+	debug := GetSectionConfig("helper", "debug")
 	message := &ProtoMessageResult{
 		MsgId:       strconv.Itoa(int(time.Now().UnixMilli())),
 		AccountId:   accountId,
@@ -139,10 +146,14 @@ func SendToGateway(fromServiceName string, zoneCode string, accountId int64, act
 				//log.Printf("找到client, 发送消息到网关, gateway = %v", item.ServiceName)
 				_, err := (*client).SendToGateway(context.Background(), message)
 				if err != nil {
-					log.Printf("error serviceFullName=%v, error=%v\n", item.ServiceName, err)
+					if debug == "true" {
+						log.Printf("error serviceFullName=%v, error=%v\n", item.ServiceName, err)
+					}
 				}
 			} else {
-				log.Printf("没有找到client, serviceFullName=%v", item.ServiceName)
+				if debug == "true" {
+					log.Printf("没有找到client, serviceFullName=%v", item.ServiceName)
+				}
 			}
 		}
 		count++
@@ -163,13 +174,16 @@ func SendToGateway(fromServiceName string, zoneCode string, accountId int64, act
 }
 
 func SendToLogic(req *ProtoMessage) *ProtoMessageResult {
+	debug := GetSectionConfig("helper", "debug")
 	serviceFullName := GetServiceFullName(*req.ServiceName, *req.NodeCode, *req.ZoneCode)
 	client, exists := logicClientManager.GetClient(serviceFullName)
 	//client := NewLogicServiceClient(grpcClient)
 	if exists {
 		resultMsg, err := (*client).SendToLogic(context.Background(), req)
 		if err != nil {
-			log.Printf("请求失败！serviceName=%v, error=%v\n", serviceFullName, err)
+			if debug == "true" {
+				log.Printf("请求失败！serviceName=%v, error=%v\n", serviceFullName, err)
+			}
 			return &ProtoMessageResult{
 				MsgId:     req.MsgId,
 				IsAck:     0,
@@ -178,7 +192,9 @@ func SendToLogic(req *ProtoMessage) *ProtoMessageResult {
 		}
 		return resultMsg
 	}
-	log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
+	if debug == "true" {
+		log.Printf("没有找到client, serviceFullName=%v", serviceFullName)
+	}
 	return &ProtoMessageResult{
 		MsgId:     req.MsgId,
 		IsAck:     0,

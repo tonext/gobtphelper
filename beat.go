@@ -106,6 +106,7 @@ func GetRandomServiceFullName() string {
 }
 
 func GetServiceFullName(serviceName string, nodeCode string, zoneCode string) string {
+	debug := GetSectionConfig("helper", "debug")
 	for _, v := range GlobalServices {
 		// log.Println("v=" + v.ServiceName)
 		// log.Println("zoneCode =" + GlobalZoneCode)
@@ -119,8 +120,10 @@ func GetServiceFullName(serviceName string, nodeCode string, zoneCode string) st
 			centerZoneCode = t2[2]
 		}
 
-		log.Printf("GetServiceFullName: serviceName=%v, nodeCode=%v, zoneCode=%v", serviceName, nodeCode, zoneCode)
-		log.Printf("GetServiceFullName: centerServiceName=%v, centerNodeCode=%v, centerZoneCode=%v", centerServiceName, centerNodeCode, centerZoneCode)
+		if debug == "true" {
+			log.Printf("GetServiceFullName: serviceName=%v, nodeCode=%v, zoneCode=%v", serviceName, nodeCode, zoneCode)
+			log.Printf("GetServiceFullName: centerServiceName=%v, centerNodeCode=%v, centerZoneCode=%v", centerServiceName, centerNodeCode, centerZoneCode)
+		}
 
 		if centerServiceName == serviceName && centerNodeCode == nodeCode && (centerZoneCode == zoneCode || centerZoneCode == "") {
 			//tmp := strings.Split(v.ServiceName, "@")

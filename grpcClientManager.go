@@ -47,7 +47,10 @@ func (sm *LogicClientManager) AddClient(client LogicClient) {
 	sm.clients[client.ServiceFullName] = client.Conn
 	sm.mutex.Unlock()
 	//logicClientCount++
-	log.Printf("新增logicClient服务: %v, 连接数: %v\n", client.ServiceFullName, len(sm.clients))
+	debug := GetSectionConfig("helper", "debug")
+	if debug == "true" {
+		log.Printf("新增logicClient服务: %v, 连接数: %v\n", client.ServiceFullName, len(sm.clients))
+	}
 }
 
 func (sm *GatewayClientManager) AddClient(client GatewayClient) {
@@ -55,7 +58,10 @@ func (sm *GatewayClientManager) AddClient(client GatewayClient) {
 	sm.clients[client.ServiceFullName] = client.Conn
 	sm.mutex.Unlock()
 	//gatewayClientCount++
-	log.Printf("新增gatewayClient服务 %v, 连接数: %v\n", client.ServiceFullName, len(sm.clients))
+	debug := GetSectionConfig("helper", "debug")
+	if debug == "true" {
+		log.Printf("新增gatewayClient服务 %v, 连接数: %v\n", client.ServiceFullName, len(sm.clients))
+	}
 }
 
 // 删除会话
@@ -64,7 +70,10 @@ func (sm *LogicClientManager) RemoveClient(serviceFullName string) {
 	delete(sm.clients, serviceFullName)
 	sm.mutex.Unlock()
 	//logicClientCount--
-	log.Printf("删除logicClient服务 %v, 连接数: %v\n", serviceFullName, len(sm.clients))
+	debug := GetSectionConfig("helper", "debug")
+	if debug == "true" {
+		log.Printf("删除logicClient服务 %v, 连接数: %v\n", serviceFullName, len(sm.clients))
+	}
 }
 
 func (sm *GatewayClientManager) RemoveClient(serviceFullName string) {
