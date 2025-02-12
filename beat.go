@@ -16,7 +16,7 @@ import (
 
 var GlobalGrpcPort string
 var GlobalNodeCode string = generateRandomString(8)
-var GloablZoneCode string = GetZoneCode()
+var GlobalZoneCode string = GetZoneCode()
 var GlobalServiceFullName string = GetRandomServiceFullName()
 
 func SendBeat(port string) {
@@ -99,8 +99,8 @@ func GetRegisterIp() string {
 func GetRandomServiceFullName() string {
 	appName := GetConfig("app_name")
 	serviceFullName := appName + "@" + GlobalNodeCode
-	if GloablZoneCode != "" {
-		serviceFullName = appName + "-" + GloablZoneCode + "@" + GlobalNodeCode
+	if GlobalZoneCode != "" {
+		serviceFullName = appName + "-" + GlobalZoneCode + "@" + GlobalNodeCode
 	}
 	return serviceFullName
 }
@@ -109,17 +109,18 @@ func GetServiceFullName(serviceName string, nodeCode string, zoneCode string) st
 	for _, v := range GlobalServices {
 		// log.Println("v=" + v.ServiceName)
 		// log.Println("zoneCode =" + GloablZoneCode)
-		tmp := strings.Split(v.ServiceName, "-")
-		if len(tmp) == 2 {
-			if strings.Contains(v.ServiceName, serviceName) && strings.Contains(v.ServiceName, nodeCode) {
-				//tmp := strings.Split(v.ServiceName, "@")
-				return v.ServiceName
-			}
-		} else if len(tmp) == 3 {
-			if strings.Contains(v.ServiceName, serviceName) && strings.Contains(v.ServiceName, nodeCode) && strings.Contains(v.ServiceName, zoneCode) {
-				//tmp := strings.Split(v.ServiceName, "@")
-				return v.ServiceName
-			}
+		t1 := strings.Split(v.ServiceName, "@")
+		t2 := strings.Split(t1[0], "-")
+
+		centerServiceName := t2[1]
+		centerNodeCode := t1[1]
+		centerZoneCode := ""
+		if len(t2) == 3 {
+			centerZoneCode = t2[2]
+		}
+		if centerServiceName == serviceName && centerNodeCode == nodeCode && (centerZoneCode == zoneCode || centerZoneCode == "") {
+			//tmp := strings.Split(v.ServiceName, "@")
+			return v.ServiceName
 		}
 	}
 	return ""
