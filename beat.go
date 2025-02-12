@@ -125,10 +125,13 @@ func GetServiceFullName(serviceName string, nodeCode string, zoneCode string) st
 			log.Printf("GetServiceFullName: centerServiceName=%v, centerNodeCode=%v, centerZoneCode=%v", centerServiceName, centerNodeCode, centerZoneCode)
 		}
 
-		if centerServiceName == serviceName && centerNodeCode == nodeCode && (centerZoneCode == zoneCode || centerZoneCode == "") {
+		if centerServiceName == serviceName && (centerNodeCode == nodeCode || nodeCode == "") && (centerZoneCode == zoneCode || zoneCode == "") {
 			//tmp := strings.Split(v.ServiceName, "@")
 			return v.ServiceName
 		}
+	}
+	if debug == "true" {
+		log.Printf("GetServiceFullName: 未找到服务 %v", serviceName)
 	}
 	return ""
 }
